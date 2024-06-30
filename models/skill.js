@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
+const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const skillSchema = mongoose.Schema({
+    Id: {
+        type: Number,
+    },
     skillName: {
         type: String,
         required: true,
@@ -15,6 +19,8 @@ const skillSchema = mongoose.Schema({
     }
 )
 
+skillSchema.plugin(AutoIncrement, { inc_field: 'Id' });
+
 const Skill = mongoose.model("Skill", skillSchema);
-    
+
 module.exports = Skill;

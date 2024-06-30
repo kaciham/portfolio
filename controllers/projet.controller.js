@@ -1,4 +1,5 @@
 const projectService = require("../services/project.service.js");
+const verifyJWT = require("../midlleware/verifyJWT.js")
 
 const createProject = async (req, res) => {
     try {
@@ -14,8 +15,7 @@ const getProjects = async (req, res) => {
         const allProjects = await projectService.getProjects();
         res.status(200).json(allProjects);
     } catch (error) {
-        const message = "la liste des projets n'a pas pu être récupérée.";
-        res.status(500).json({message, data: error})
+
     }
 };
 

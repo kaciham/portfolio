@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
 const userSchema = mongoose.Schema(
     {
@@ -11,14 +12,27 @@ const userSchema = mongoose.Schema(
             required: true,
         },
         profilePicture: {
-            type: Image,
+            type: String,
             required: false,
             defaut: null,
+        },
+        validateUser: {
+            type: Boolean,
+            default: false,
         },
         email: {
             type: String,
             unique: true,
+            lowercase: true,
             required: true,
+        },
+        title: {
+            type: String,
+            required: false,
+        },
+        resumeLink: {
+            type: String,
+            required: false,
         },
         phone: {
             type: Number,
@@ -28,27 +42,60 @@ const userSchema = mongoose.Schema(
             type: String,
             required: true,
         },
-        linkedUserAccount: {
+        linkedInUrl: {
             type: String,
             required: false,
         },
-        githubUserAccount: {
+        githubUrl: {
             type: String,
             required: false,
         },
-        skill: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Skill"
+        visioScheduleLink: {
+            type: String,
+            required: false,
         },
-        education: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Education"
-        }
+        // skill: [{
+        //     type: mongoose.Schema.Types.ObjectId,
+        //     ref: "Skill"
+        // }],
+        // education: [{
+        //     type: mongoose.Schema.Types.ObjectId,
+        //     ref: "Education"
+        // }],
+        // work: [{
+        //     type: mongoose.Schema.Types.ObjectId,
+        //     ref: "Work"
+        // }],
+        // service: [{
+        //     type: mongoose.Schema.Types.serviceTitle,
+        //     ref: "Service"
+        // }]
     },
     {
         timestamps: true
     }
 )
+
+userSchema.pre('save', async function (next) {
+    try {
+        if (this.isNew) {
+            const salt = await bcrypt.genSalt(10)
+            const hashedPassword = await bcrypt.hash(this.password, salt)
+            this.password = hashedPassword
+        }
+        next()
+    } catch (error) {
+        next(error)
+    }
+})
+
+userSchema.methods.isValidPassword = async function (password) {
+    try {
+        return await bcrypt.compare(password, this.password)
+    } catch (error) {
+        throw error
+    }
+}
 
 const User = mongoose.model("User", userSchema);
 

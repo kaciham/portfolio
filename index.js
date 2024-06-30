@@ -1,20 +1,25 @@
 const express = require("express");
-require("./db/dbconfig");
+require("./config/db.config");
 const app = express();
 const port = 8080;
-const bodyParser = require("body-parser");
 const cors = require("cors");
 const morgan = require("morgan");
+//import routes
+const router = require("./routes/routes");
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 app.use(cors());
 app.use(morgan("dev"));
 
-//import routes
-const router = require("./routes/routes");
 //project
 app.use("/api", router);
+
+
+//home
+app.get('/', (req, res) => {
+    res.json({ meesage: 'Hello There !' })
+})
 
 //gestion des erreurs 404
 app.use(({ res }) => {
@@ -26,3 +31,4 @@ app.use(({ res }) => {
 app.listen(port, () => (
     console.log(`Backoffice server is running on http://localhost:${port}`)
 ));
+

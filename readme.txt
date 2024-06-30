@@ -1,7 +1,1 @@
-add:
-
-cv stuff
-
-education
-experience
-hobbies
+"coming next ..."
