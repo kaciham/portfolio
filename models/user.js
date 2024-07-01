@@ -1,5 +1,11 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const crypto = require('crypto');
+
+function generateToken() {
+    return crypto.randomBytes(20).toString('hex');
+}
+
 
 const userSchema = mongoose.Schema(
     {
@@ -15,6 +21,10 @@ const userSchema = mongoose.Schema(
             type: String,
             required: false,
             defaut: null,
+        },
+        confirmationToken: {
+            type: String,
+            required: false,
         },
         validateUser: {
             type: Boolean,
@@ -79,6 +89,7 @@ const userSchema = mongoose.Schema(
 userSchema.pre('save', async function (next) {
     try {
         if (this.isNew) {
+            this.confirmationToken = generateToken();
             const salt = await bcrypt.genSalt(10)
             const hashedPassword = await bcrypt.hash(this.password, salt)
             this.password = hashedPassword

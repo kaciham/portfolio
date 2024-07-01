@@ -21,6 +21,8 @@ router.get('/users', userController.getUsers);
 router.get('/user/:id', userController.getUser);
 router.put('/user/:id', userController.updateUser);
 router.delete('/user/:id', userController.deleteUser)
+router.get('/confirm/:token', userController.confirmUser);
+
 
 //skill
 router.post('/skill', skillController.createSkill);

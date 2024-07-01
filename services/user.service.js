@@ -1,5 +1,36 @@
 const mongoose = require("mongoose");
 const User = require("../models/user.js");
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+    host: 'smtp-mail.outlook.com',
+    port: 587,
+    secure: false, // true for 465, false for other ports
+    auth: {
+        user: 'kacihamroun@outlook.com',
+        pass: '#KaciKaci59'
+    },
+    tls: {
+        rejectUnauthorized: false
+    }
+});
+function sendConfirmationEmail(email, confirmationToken) {
+
+    const mailOptions = {
+        from: 'kacihamroun@outlook.com',
+        to: email,
+        subject: 'Confirm your email',
+        text: `Please confirm your email by clicking the following link: http://localhost:3000/api/confirm/${confirmationToken}`
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+}
 
 const createUser = async (userData) => {
 
@@ -76,5 +107,5 @@ const deleteUser = async (id) => {
 }
 
 module.exports = {
-    createUser, getUsers, getUser, deleteUser, updateUser
+    createUser, getUsers, getUser, deleteUser, updateUser, sendConfirmationEmail
 };

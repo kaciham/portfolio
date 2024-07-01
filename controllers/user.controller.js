@@ -1,16 +1,30 @@
 const userService = require("../services/user.service");
+const User = require('../models/user.js')
 
 const createUser = async (req, res) => {
     try {
-        const newUser = await userService.createUser(req.body);
-        console.log(newUser);
+        const user = new User(req.body);
+        await user.save();
+        userService.sendConfirmationEmail(user.email, user.confirmationToken);
+        console.log(user);
         res.status(201).json({
-            message: 'User created successfully',
-            user: newUser,
+            message: 'User created successfully, please confirm your email',
+            user: user,
         });
     } catch (error) {
         console.error(error);
     }
+}
+
+const confirmUser = async (req, res) => {
+    const user = await User.findOne({ confirmationToken: req.params.token });
+    if (!user) {
+        return res.status(400).json({ error: 'Invalid confirmation token' });
+    }
+    user.validateUser = true;
+    user.confirmationToken = null; // clear the token after it's used
+    await user.save();
+    res.status(200).json({ message: 'Email confirmed successfully' });
 }
 
 const getUsers = async (req, res) => {
@@ -60,6 +74,7 @@ const deleteUser = async (req, res) => {
 }
 module.exports = {
     createUser,
+    confirmUser,
     getUsers,
     getUser,
     updateUser,

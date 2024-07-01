@@ -1,7 +1,7 @@
 const express = require("express");
 require("./config/db.config");
 const app = express();
-const port = 8080;
+const port = 3000;
 const cors = require("cors");
 const morgan = require("morgan");
 //import routes
@@ -20,7 +20,6 @@ app.use("/api", router);
 app.get('/', (req, res) => {
     res.json({ meesage: 'Hello There !' })
 })
-
 //gestion des erreurs 404
 app.use(({ res }) => {
     const message = "Impossible de trouver la ressource demandée ! Vous pouvez essayer une autre URL.";
